@@ -9,9 +9,9 @@ type State = {
 
 type Action =
   | { type: "openAccount" }
-  | { type: "deposit"; amount: "number" }
-  | { type: "withdraw"; amount: "number" }
-  | { type: "requestLoan"; amount: "number" }
+  | { type: "deposit"; amount: number }
+  | { type: "withdraw"; amount: number }
+  | { type: "requestLoan"; amount: number }
   | { type: "payLoan" }
   | { type: "closeAccount" };
 
@@ -28,6 +28,14 @@ const reducer = (state: State, action: Action): State => {
         balance: 500,
         loan: 0,
         isOpen: true,
+      };
+    case "deposit":
+      return { ...state, balance: state.balance + action.amount };
+    case "withdraw":
+      if (state.balance < action.amount) return state; // prevent overdraft
+      return {
+        ...state,
+        balance: state.balance - action.amount,
       };
     case "closeAccount":
       return {
@@ -59,12 +67,22 @@ function App() {
         </button>
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <button type="button" disabled={!state.isOpen} name="deposit150Btn">
+        <button
+          type="button"
+          disabled={!state.isOpen}
+          name="deposit150Btn"
+          onClick={() => dispatch({ type: "deposit", amount: 150 })}
+        >
           Deposit 150
         </button>
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <button type="button" disabled={!state.isOpen} name="withdraw50Btn">
+        <button
+          type="button"
+          disabled={!state.isOpen}
+          name="withdraw50Btn"
+          onClick={() => dispatch({ type: "withdraw", amount: 50 })}
+        >
           Withdraw 50
         </button>
       </div>
