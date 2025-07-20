@@ -1,35 +1,95 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useReducer } from "react";
+import "./App.css";
+
+type State = {
+  balance: number;
+  loan: number;
+  isOpen: boolean;
+};
+
+type Action =
+  | { type: "openAccount" }
+  | { type: "deposit"; amount: "number" }
+  | { type: "withdraw"; amount: "number" }
+  | { type: "requestLoan"; amount: "number" }
+  | { type: "payLoan" }
+  | { type: "closeAccount" };
+
+const initialState: State = {
+  balance: 0,
+  loan: 0,
+  isOpen: false,
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "openAccount":
+      return {
+        balance: 500,
+        loan: 0,
+        isOpen: true,
+      };
+    case "closeAccount":
+      return {
+        balance: 0,
+        loan: 0,
+        isOpen: false,
+      };
+    default:
+      return state;
+  }
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <h1>useReducer Bank Account</h1>
+      <p>Balance: {state.balance}</p>
+      <p>Loan: {state.loan}</p>
+      <div style={{ marginBottom: "20px" }}>
+        <button
+          type="button"
+          disabled={state.isOpen}
+          name="openAccountBtn"
+          onClick={() => dispatch({ type: "openAccount" })}
+        >
+          Open Account
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div style={{ marginBottom: "20px" }}>
+        <button type="button" disabled={!state.isOpen} name="deposit150Btn">
+          Deposit 150
+        </button>
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <button type="button" disabled={!state.isOpen} name="withdraw50Btn">
+          Withdraw 50
+        </button>
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <button type="button" disabled={!state.isOpen} name="requestLoanBtn">
+          Request Loan of 5000
+        </button>
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <button type="button" disabled={!state.isOpen} name="payLoanBtn">
+          Pay Loan
+        </button>
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <button
+          type="button"
+          disabled={!state.isOpen}
+          name="closeAccountBtn"
+          onClick={() => dispatch({ type: "closeAccount" })}
+        >
+          Close Account
+        </button>
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
