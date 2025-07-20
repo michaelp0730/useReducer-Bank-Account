@@ -37,6 +37,15 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         balance: state.balance - action.amount,
       };
+    case "requestLoan":
+      if (state.loan > 0) return state; // loan already exists
+      return {
+        ...state,
+        loan: action.amount,
+      };
+    case "payLoan":
+      if (state.loan === 0 || state.balance < state.loan) return state;
+      return { ...state, balance: state.balance - state.loan, loan: 0 };
     case "closeAccount":
       return {
         balance: 0,
@@ -87,12 +96,22 @@ function App() {
         </button>
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <button type="button" disabled={!state.isOpen} name="requestLoanBtn">
+        <button
+          type="button"
+          disabled={!state.isOpen || state.loan > 0}
+          name="requestLoanBtn"
+          onClick={() => dispatch({ type: "requestLoan", amount: 5000 })}
+        >
           Request Loan of 5000
         </button>
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <button type="button" disabled={!state.isOpen} name="payLoanBtn">
+        <button
+          type="button"
+          disabled={!state.isOpen || state.loan === 0 || state.balance < state.loan}
+          name="payLoanBtn"
+          onClick={() => dispatch({ type: "payLoan" })}
+        >
           Pay Loan
         </button>
       </div>
